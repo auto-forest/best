@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오토포레스트 - 최저가 오토리스 & 장기렌트</title>
+    <script>
+        function addHyphen(obj) {
+            var number = obj.value.replace(/[^0-9]/g, "");
+            var phone = "";
+
+            if(number.length < 4) {
+                phone = number;
+            } else if(number.length < 7) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3);
+            } else if(number.length < 11) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 3);
+                phone += "-";
+                phone += number.substr(6);
+            } else {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 4);
+                phone += "-";
+                phone += number.substr(7);
+            }
+            obj.value = phone;
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            word-break: keep-all;
+        }
+        
+        /* 신뢰도 바 */
+        .trust-bar {
+            background: #f8f9fa;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .trust-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            font-size: 14px;
+            color: #666;
+            padding: 0 20px;
+        }
+        
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .trust-item strong {
+            color: #28a745;
+            font-weight: 700;
+        }
+        
+        /* 메인 히어로 섹션 */
+        .hero {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-text .price-highlight {
+            font-size: 24px;
+            color: #FFD700;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .benefit-item::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        /* 상담 신청 폼 */
+        .consult-form {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h2 {
+            color: #1e3c72;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+        
+        .form-header .badge {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .form-header p {
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #28a745;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+            background: white;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(40, 167, 69, 0.4);
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .highlight {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        /* 간단한 특징 섹션 */
+        .features {
+            padding: 60px 20px;
+            background: #f8f9fa;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            color: #1e3c72;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* 프로세스 */
+        .process {
+            padding: 60px 20px;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            color: #1e3c72;
+            margin-bottom: 50px;
+            font-weight: 800;
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        
+        .step-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 최종 CTA */
+        .final-cta {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .final-cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+        
+        .final-cta p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+        
+        /* 플로팅 버튼 */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+            animation: pulse 2s infinite;
+            z-index: 1000;
+            font-size: 16px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 반응형 최적화 */
+        @media (max-width: 768px) {
+            .trust-content {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0 15px;
+            }
+            
+            .trust-item {
+                font-size: 13px;
+            }
+            
+            .hero {
+                padding: 30px 15px;
+                min-height: auto;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                text-align: center;
+            }
+            
+            .hero-text h1 {
+                font-size: 32px;
+                line-height: 1.3;
+                margin-bottom: 15px;
+            }
+            
+            .hero-text .price-highlight {
+                font-size: 18px;
+                margin-bottom: 20px;
+            }
+            
+            .benefits-list {
+                gap: 12px;
+                margin-bottom: 25px;
+            }
+            
+            .benefit-item {
+                font-size: 16px;
+                justify-content: center;
+            }
+            
+            .benefit-item::before {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .consult-form {
+                padding: 25px 20px;
+                margin: 0 10px;
+            }
+            
+            .form-header h2 {
+                font-size: 24px;
+            }
+            
+            .form-header .badge {
+                font-size: 13px;
+                padding: 6px 16px;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 14px 16px;
+                font-size: 16px; /* iOS 확대 방지 */
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .submit-btn {
+                padding: 16px;
+                font-size: 18px;
+                margin-top: 15px;
+            }
+            
+            .features {
+                padding: 40px 15px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .feature-card {
+                padding: 25px 20px;
+            }
+            
+            .feature-icon {
+                font-size: 40px;
+                margin-bottom: 15px;
+            }
+            
+            .feature-card h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            
+            .feature-card p {
+                font-size: 14px;
+            }
+            
+            .process {
+                padding: 40px 15px;
+            }
+            
+            .section-title {
+                font-size: 26px;
+                margin-bottom: 35px;
+            }
+            
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                max-width: 300px;
+            }
+            
+            .step-number {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .step-title {
+                font-size: 16px;
+            }
+            
+            .step-desc {
+                font-size: 13px;
+            }
+            
+            .final-cta {
+                padding: 40px 15px;
+            }
+            
+            .final-cta h2 {
+                font-size: 26px;
+                margin-bottom: 15px;
+                line-height: 1.3;
+            }
+            
+            .final-cta p {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            
+            .cta-button {
+                padding: 16px 35px;
+                font-size: 17px;
+            }
+            
+            .floating-btn {
+                bottom: 15px;
+                right: 15px;
+                padding: 12px 18px;
+                font-size: 14px;
+                border-radius: 25px;
+            }
+        }
+        
+        /* 더 작은 모바일 화면 (iPhone SE 등) */
+        @media (max-width: 375px) {
+            .hero-text h1 {
+                font-size: 28px;
+            }
+            
+            .hero-text .price-highlight {
+                font-size: 16px;
+            }
+            
+            .consult-form {
+                padding: 20px 15px;
+                margin: 0 5px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .floating-btn {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 신뢰도 바 -->
+    <div class="trust-bar">
+        <div class="trust-content">
+            <div class="trust-item">
+                <span>✓</span>
+                <span>누적 계약 <strong>30,000건+</strong></span>
+            </div>
+            <div class="trust-item">
+                <span>✓</span>
+                <span>고객 만족도 <strong>98%</strong></span>
+            </div>
+            <div class="trust-item">
+                <span>✓</span>
+                <span>전문 컨설턴트 <strong>1:1 상담</strong></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 플로팅 버튼 -->
+    <button class="floating-btn" onclick="scrollToForm()">
+        📞 바로 상담받기
+    </button>
+    
+    <!-- 메인 히어로 섹션 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>최저가 보장<br>오토리스 & 장기렌트</h1>
+                    <div class="price-highlight">업계 1등 조건으로 신차 드라이브!</div>
+                    
+                    <div class="benefits-list">
+                        <div class="benefit-item">초기비용 0원도 가능</div>
+                        <div class="benefit-item">법인·개인사업자 비용처리</div>
+                        <div class="benefit-item">보험료·세금 모두 포함</div>
+                        <div class="benefit-item">24시간 내 심사 완료</div>
+                    </div>
+                </div>
+                
+                <!-- 상담 신청 폼 -->
+                <div class="consult-form" id="consultation-form">
+                    <div class="form-header">
+                        <div class="badge">🎉 한정 특가 이벤트</div>
+                        <h2>1분 무료 견적</h2>
+                        <p>전문가가 맞춤 플랜을 제안해드립니다</p>
+                    </div>
+                    
+                    <form id="consultForm" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">성함/회사명 *</label>
+                                <input type="text" id="name" name="name" required placeholder="홍길동">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">연락처 *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678" onkeyup="addHyphen(this)" maxlength="13">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customer-type">고객 구분 *</label>
+                            <select id="customer-type" name="customer-type" required>
+                                <option value="">선택해주세요</option>
+                                <option value="개인">개인</option>
+                                <option value="법인">법인</option>
+                                <option value="개인사업자">개인사업자</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vehicle-type">희망 차종</label>
+                                <input type="text" id="vehicle-type" name="vehicle-type" placeholder="예: 쏘나타, 그랜저, 아반떼">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="period">이용 기간</label>
+                                <select id="period" name="period">
+                                    <option value="">선택해주세요</option>
+                                    <option value="12개월">12개월</option>
+                                    <option value="24개월">24개월</option>
+                                    <option value="36개월">36개월</option>
+                                    <option value="48개월">48개월</option>
+                                    <option value="60개월">60개월</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            💬 무료 견적 받기
+                        </button>
+                    </form>
+                    
+                    <div class="form-footer">
+                        <p>상담 신청 시 <span class="highlight">맞춤형 최저가 견적서</span>를 즉시 받아보세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 핵심 특징 -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">💰</span>
+                    <h3>최저가 보장</h3>
+                    <p>타사 견적과 비교해드리고<br>더 좋은 조건으로 제안</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>초스피드 출고</h3>
+                    <p>재고 차량 보유로<br>3일 내 출고 가능</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3>비용처리 가능</h3>
+                    <p>법인·개인사업자<br>월 렌탈료 손금처리</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🛡️</span>
+                    <h3>올인원 서비스</h3>
+                    <p>보험·세금·정비까지<br>모든 비용 포함</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 간단한 프로세스 -->
+    <section class="process">
+        <div class="container">
+            <h2 class="section-title">3단계로 끝나는 간편한 절차</h2>
+            
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">상담 신청</div>
+                    <div class="step-desc">1분 내 신청 완료</div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">맞춤 견적</div>
+                    <div class="step-desc">최적 조건 제안</div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">계약 & 출고</div>
+                    <div class="step-desc">빠른 심사 후 출고</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 최종 CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>지금 바로 최저가 견적 받아보세요</h2>
+            <p>매달 한정된 특가 혜택을 놓치지 마세요</p>
+            <a href="#consultation-form" class="cta-button" onclick="scrollToForm()">
+                🚗 지금 바로 상담 신청
+            </a>
+        </div>
+    </section>
+    
+    <script>
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ 제출 중...';
+            submitBtn.disabled = true;
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                customerType: document.getElementById('customer-type').value,
+                vehicleType: document.getElementById('vehicle-type').value,
+                period: document.getElementById('period').value,
+                timestamp: new Date().toLocaleString('ko-KR')
+            };
+            
+            try {
+                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwM9DSb_lGuJihfYij26LoxcKtjvuM4b5KH8WFGdTzelXv2-NBQ_lBNGndwJ-JIzQMT/exec';
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                alert('✅ 상담 신청이 완료되었습니다!\n\n전문 컨설턴트가 30분 내에 연락드려\n맞춤형 최저가 견적을 안내해드리겠습니다.');
+                event.target.reset();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ 신청 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+        
+        function scrollToForm() {
+            document.getElementById('consultation-form').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+        
+        // 폼 필드에 포커스 시 부드러운 효과
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
