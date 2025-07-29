@@ -759,23 +759,32 @@
                             </select>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="vehicle-type">희망 차종</label>
-                                <input type="text" id="vehicle-type" name="vehicle-type" placeholder="예: G80, 카니발, S클래스">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="period">이용 기간</label>
-                                <select id="period" name="period">
-                                    <option value="">선택해주세요</option>
-                                    <option value="12개월">12개월</option>
-                                    <option value="24개월">24개월</option>
-                                    <option value="36개월">36개월</option>
-                                    <option value="48개월">48개월</option>
-                                    <option value="60개월">60개월</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="vehicle-type">희망 차종</label>
+                            <input type="text" id="vehicle-type" name="vehicle-type" placeholder="예: G80, 카니발, S클래스">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="purchase-type">구매 유형 *</label>
+                            <select id="purchase-type" name="purchase-type" required>
+                                <option value="">선택해주세요</option>
+                                <option value="오토리스">오토리스</option>
+                                <option value="장기렌트">장기렌트</option>
+                                <option value="현금(할부)">현금(할부)</option>
+                                <option value="저신용렌트">저신용렌트</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="period">이용 기간</label>
+                            <select id="period" name="period">
+                                <option value="">선택해주세요</option>
+                                <option value="12개월">12개월</option>
+                                <option value="24개월">24개월</option>
+                                <option value="36개월">36개월</option>
+                                <option value="48개월">48개월</option>
+                                <option value="60개월">60개월</option>
+                            </select>
                         </div>
                         
                         <button type="submit" class="submit-btn">
@@ -874,6 +883,7 @@
                 phone: document.getElementById('phone').value,
                 customerType: document.getElementById('customer-type').value,
                 vehicleType: document.getElementById('vehicle-type').value,
+                purchaseType: document.getElementById('purchase-type').value,
                 period: document.getElementById('period').value,
                 timestamp: new Date().toLocaleString('ko-KR')
             };
