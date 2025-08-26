@@ -213,7 +213,8 @@
         }
         
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 15px 18px;
             border: 2px solid #e0e0e0;
@@ -221,10 +222,19 @@
             font-size: 16px;
             transition: all 0.3s ease;
             background: #fafafa;
+            font-family: inherit;
+        }
+        
+        .form-group textarea {
+            padding: 10px 15px;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 100px;
         }
         
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             border-color: #28a745;
             outline: none;
             box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
@@ -540,10 +550,16 @@
             }
             
             .form-group input,
-            .form-group select {
+            .form-group select,
+            .form-group textarea {
                 padding: 12px 14px;
                 font-size: 16px; /* iOS 확대 방지 */
                 border-radius: 8px;
+            }
+            
+            .form-group textarea {
+                padding: 8px 12px;
+                min-height: 50px;
             }
             
             .form-row {
@@ -754,8 +770,8 @@
                             <select id="customer-type" name="customer-type" required>
                                 <option value="">선택해주세요</option>
                                 <option value="개인">개인</option>
-                                <option value="법인">법인</option>
                                 <option value="개인사업자">개인사업자</option>
+                                <option value="법인사업자">법인사업자</option>
                             </select>
                         </div>
                         
@@ -764,27 +780,45 @@
                             <input type="text" id="vehicle-type" name="vehicle-type" placeholder="예: G80, 카니발, S클래스">
                         </div>
                         
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="purchase-type">구매 유형 *</label>
+                                <select id="purchase-type" name="purchase-type" required>
+                                    <option value="">선택해주세요</option>
+                                    <option value="오토리스">오토리스</option>
+                                    <option value="장기렌트">장기렌트</option>
+                                    <option value="현금(할부)">현금(할부)</option>
+                                    <option value="저신용렌트">저신용렌트</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="period">이용 기간</label>
+                                <select id="period" name="period">
+                                    <option value="">선택해주세요</option>
+                                    <option value="12개월">12개월</option>
+                                    <option value="24개월">24개월</option>
+                                    <option value="36개월">36개월</option>
+                                    <option value="48개월">48개월</option>
+                                    <option value="60개월">60개월</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label for="purchase-type">구매 유형 *</label>
-                            <select id="purchase-type" name="purchase-type" required>
+                            <label for="consultation-time">상담 가능 시간 *</label>
+                            <select id="consultation-time" name="consultation-time" required>
                                 <option value="">선택해주세요</option>
-                                <option value="오토리스">오토리스</option>
-                                <option value="장기렌트">장기렌트</option>
-                                <option value="현금(할부)">현금(할부)</option>
-                                <option value="저신용렌트">저신용렌트</option>
+                                <option value="오전(9시~12시)">오전(9시~12시)</option>
+                                <option value="오후(13시~17시)">오후(13시~17시)</option>
+                                <option value="문자먼저주세요">문자먼저주세요</option>
+                                <option value="언제든지 가능">언제든지 가능</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label for="period">이용 기간</label>
-                            <select id="period" name="period">
-                                <option value="">선택해주세요</option>
-                                <option value="12개월">12개월</option>
-                                <option value="24개월">24개월</option>
-                                <option value="36개월">36개월</option>
-                                <option value="48개월">48개월</option>
-                                <option value="60개월">60개월</option>
-                            </select>
+                            <label for="message">문의사항</label>
+                            <textarea id="message" name="message" placeholder="추가 문의사항이 있으시면 입력해주세요"></textarea>
                         </div>
                         
                         <button type="submit" class="submit-btn">
@@ -885,6 +919,8 @@
                 vehicleType: document.getElementById('vehicle-type').value,
                 purchaseType: document.getElementById('purchase-type').value,
                 period: document.getElementById('period').value,
+                consultationTime: document.getElementById('consultation-time').value,
+                message: document.getElementById('message').value,
                 timestamp: new Date().toLocaleString('ko-KR')
             };
             
@@ -919,7 +955,7 @@
         
         // 폼 필드에 포커스 시 부드러운 효과
         document.addEventListener('DOMContentLoaded', function() {
-            const inputs = document.querySelectorAll('input, select');
+            const inputs = document.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
                     this.parentElement.style.transform = 'scale(1.02)';
