@@ -725,7 +725,7 @@
                         <p>전문가가 맞춤 플랜을 제안해드립니다</p>
                     </div>
                     
-                    <form id="consultForm" onsubmit="handleSubmit(event)">
+                    <form id="consultForm">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">성함/회사명 *</label>
@@ -928,7 +928,7 @@
             try {
                 // ⚠️ 중요: 여기에 Google Apps Script 웹 앱 배포 후 받은 URL을 넣으세요!
                 // 예시: https://script.google.com/macros/s/AKfycbzi37re6kbpHxPcdbotGtGLZPOmzB1do2lHWkiZ-DtvJWB5SkIaFN7RbexfJuKv2VTP/exec
-                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsdj5jYQ7isvCkzmCJXYdW39Gnol8BAQvs8RCr011J5YZ0oNRhX6zH5U8dkgW-dJuL/exec';
+                const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
                 
                 // SCRIPT_URL이 아직 설정되지 않았는지 확인
                 if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
@@ -984,9 +984,7 @@
                         24시간 내에 전문 컨설턴트가<br>
                         연락드려 맞춤 견적을 안내해드립니다.
                     </p>
-                    <p style="color: #28a745; font-size: 14px; font-weight: 600; margin-top: 20px;">
-                        💬 텔레그램 알림도 발송되었습니다
-                    </p>
+                    
                     <button onclick="location.reload()" style="
                         margin-top: 30px;
                         padding: 15px 30px;
@@ -1012,12 +1010,20 @@
                 </style>
             `;
             
-            // 5초 후 원래 폼으로 복구
+            // 5초 후 원래 폼으로 복구 - 이벤트 리스너 중복 등록 방지
             setTimeout(() => {
                 formContainer.innerHTML = originalContent;
-                // 이벤트 리스너 재설정
-                document.getElementById('consultForm').addEventListener('submit', handleSubmit);
+                // 폼 요소 찾기
+                const form = document.getElementById('consultForm');
                 const phoneInput = document.getElementById('phone');
+                
+                // 이벤트 리스너를 다시 등록 (이미 페이지 로드 시 등록되므로 여기서는 제거)
+                // form과 phoneInput 이벤트는 DOMContentLoaded에서만 처리
+                if (form) {
+                    // 기존 리스너 제거 후 재등록
+                    form.removeEventListener('submit', handleSubmit);
+                    form.addEventListener('submit', handleSubmit);
+                }
                 if (phoneInput) {
                     phoneInput.addEventListener('keyup', function() {
                         addHyphen(this);
@@ -1047,10 +1053,10 @@
                 });
             });
             
-            // 폼 제출 이벤트 리스너 등록
+            // 폼 제출 이벤트 리스너 등록 (한 번만 등록)
             const form = document.getElementById('consultForm');
             if (form) {
-                form.addEventListener('submit', handleSubmit);
+                form.addEventListener('submit', handleSubmit, { once: false });
             }
         });
     </script>
