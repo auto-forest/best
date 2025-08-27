@@ -904,9 +904,18 @@
             obj.value = phone;
         }
 
+        // 중복 제출 방지를 위한 플래그
+        let isSubmitting = false;
+
         // 폼 제출 처리 함수
         async function handleSubmit(event) {
             event.preventDefault();
+            
+            // 중복 제출 방지
+            if (isSubmitting) {
+                return;
+            }
+            isSubmitting = true;
             
             const submitBtn = event.target.querySelector('.submit-btn');
             const originalText = submitBtn.innerHTML;
@@ -928,13 +937,14 @@
             try {
                 // ⚠️ 중요: 여기에 Google Apps Script 웹 앱 배포 후 받은 URL을 넣으세요!
                 // 예시: https://script.google.com/macros/s/AKfycbzi37re6kbpHxPcdbotGtGLZPOmzB1do2lHWkiZ-DtvJWB5SkIaFN7RbexfJuKv2VTP/exec
-                const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsdj5jYQ7isvCkzmCJXYdW39Gnol8BAQvs8RCr011J5YZ0oNRhX6zH5U8dkgW-dJuL/exec';
                 
                 // SCRIPT_URL이 아직 설정되지 않았는지 확인
                 if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                     alert('⚠️ Google Apps Script URL이 설정되지 않았습니다.\n\n설정 방법:\n1. Google Apps Script에서 코드 배포\n2. 받은 URL을 SCRIPT_URL에 입력');
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
+                    isSubmitting = false;
                     return;
                 }
                 
@@ -958,6 +968,7 @@
                 
                 // 네트워크 오류 등의 경우 처리
                 if (confirm('신청 처리 중 일시적인 오류가 발생했습니다.\n다시 시도하시겠습니까?')) {
+                    isSubmitting = false; // 재시도를 위해 플래그 리셋
                     handleSubmit(event);
                 } else {
                     alert('📞 직접 문의해주세요.\n고객센터: 1800-0000');
@@ -965,6 +976,7 @@
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
+                isSubmitting = false; // 플래그 리셋
             }
         }
         
@@ -984,7 +996,6 @@
                         24시간 내에 전문 컨설턴트가<br>
                         연락드려 맞춤 견적을 안내해드립니다.
                     </p>
-                    
                     <button onclick="location.reload()" style="
                         margin-top: 30px;
                         padding: 15px 30px;
