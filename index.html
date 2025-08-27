@@ -4,33 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>오토포레스트 - 최저가 오토리스 & 장기렌트</title>
-    <script>
-        function addHyphen(obj) {
-            var number = obj.value.replace(/[^0-9]/g, "");
-            var phone = "";
-
-            if(number.length < 4) {
-                phone = number;
-            } else if(number.length < 7) {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3);
-            } else if(number.length < 11) {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3, 3);
-                phone += "-";
-                phone += number.substr(6);
-            } else {
-                phone += number.substr(0, 3);
-                phone += "-";
-                phone += number.substr(3, 4);
-                phone += "-";
-                phone += number.substr(7);
-            }
-            obj.value = phone;
-        }
-    </script>
     <style>
         * {
             margin: 0;
@@ -904,6 +877,34 @@
     </section>
     
     <script>
+        // 전화번호 포맷팅 함수
+        function addHyphen(obj) {
+            var number = obj.value.replace(/[^0-9]/g, "");
+            var phone = "";
+
+            if(number.length < 4) {
+                phone = number;
+            } else if(number.length < 7) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3);
+            } else if(number.length < 11) {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 3);
+                phone += "-";
+                phone += number.substr(6);
+            } else {
+                phone += number.substr(0, 3);
+                phone += "-";
+                phone += number.substr(3, 4);
+                phone += "-";
+                phone += number.substr(7);
+            }
+            obj.value = phone;
+        }
+
+        // 폼 제출 처리 함수
         async function handleSubmit(event) {
             event.preventDefault();
             
@@ -916,36 +917,116 @@
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 customerType: document.getElementById('customer-type').value,
-                vehicleType: document.getElementById('vehicle-type').value,
+                vehicleType: document.getElementById('vehicle-type').value || '-',
                 purchaseType: document.getElementById('purchase-type').value,
-                period: document.getElementById('period').value,
+                period: document.getElementById('period').value || '-',
                 consultationTime: document.getElementById('consultation-time').value,
-                message: document.getElementById('message').value,
+                message: document.getElementById('message').value || '-',
                 timestamp: new Date().toLocaleString('ko-KR')
             };
             
             try {
-                const SCRIPT_URL = 'hhttps://script.google.com/macros/s/AKfycbzi37re6kbpHxPcdbotGtGLZPOmzB1do2lHWkiZ-DtvJWB5SkIaFN7RbexfJuKv2VTP/exec';
+                // ⚠️ 중요: 여기에 Google Apps Script 웹 앱 배포 후 받은 URL을 넣으세요!
+                // 예시: https://script.google.com/macros/s/AKfycbzi37re6kbpHxPcdbotGtGLZPOmzB1do2lHWkiZ-DtvJWB5SkIaFN7RbexfJuKv2VTP/exec
+                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsdj5jYQ7isvCkzmCJXYdW39Gnol8BAQvs8RCr011J5YZ0oNRhX6zH5U8dkgW-dJuL/exec';
+                
+                // SCRIPT_URL이 아직 설정되지 않았는지 확인
+                if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                    alert('⚠️ Google Apps Script URL이 설정되지 않았습니다.\n\n설정 방법:\n1. Google Apps Script에서 코드 배포\n2. 받은 URL을 SCRIPT_URL에 입력');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
                 
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',  // CORS 에러 방지
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify(formData)
                 });
                 
-                alert('✅ 상담 신청이 완료되었습니다!\n\n전문 컨설턴트가 24시간 내에 연락드려\n맞춤형 최저가 견적을 안내해드리겠습니다.');
+                // 성공 메시지 표시
+                showSuccessMessage();
+                
+                // 폼 초기화
                 event.target.reset();
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ 신청 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+                
+                // 네트워크 오류 등의 경우 처리
+                if (confirm('신청 처리 중 일시적인 오류가 발생했습니다.\n다시 시도하시겠습니까?')) {
+                    handleSubmit(event);
+                } else {
+                    alert('📞 직접 문의해주세요.\n고객센터: 1800-0000');
+                }
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
         }
         
+        // 성공 메시지 표시 함수
+        function showSuccessMessage() {
+            // 성공 팝업 대신 폼을 감사 메시지로 교체
+            const formContainer = document.getElementById('consultation-form');
+            const originalContent = formContainer.innerHTML;
+            
+            formContainer.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 60px; margin-bottom: 20px; animation: checkmark 0.5s ease-in-out;">✅</div>
+                    <h2 style="color: #28a745; font-size: 28px; margin-bottom: 15px; font-weight: 800;">
+                        신청이 완료되었습니다!
+                    </h2>
+                    <p style="color: #666; font-size: 16px; line-height: 1.8; margin-bottom: 10px;">
+                        24시간 내에 전문 컨설턴트가<br>
+                        연락드려 맞춤 견적을 안내해드립니다.
+                    </p>
+                    <p style="color: #28a745; font-size: 14px; font-weight: 600; margin-top: 20px;">
+                        💬 텔레그램 알림도 발송되었습니다
+                    </p>
+                    <button onclick="location.reload()" style="
+                        margin-top: 30px;
+                        padding: 15px 30px;
+                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                        color: white;
+                        border: none;
+                        border-radius: 25px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        다른 차량도 문의하기
+                    </button>
+                </div>
+                <style>
+                    @keyframes checkmark {
+                        0% { transform: scale(0) rotate(0deg); }
+                        50% { transform: scale(1.2) rotate(360deg); }
+                        100% { transform: scale(1) rotate(360deg); }
+                    }
+                </style>
+            `;
+            
+            // 5초 후 원래 폼으로 복구
+            setTimeout(() => {
+                formContainer.innerHTML = originalContent;
+                // 이벤트 리스너 재설정
+                document.getElementById('consultForm').addEventListener('submit', handleSubmit);
+                const phoneInput = document.getElementById('phone');
+                if (phoneInput) {
+                    phoneInput.addEventListener('keyup', function() {
+                        addHyphen(this);
+                    });
+                }
+            }, 5000);
+        }
+        
+        // 폼으로 스크롤하는 함수
         function scrollToForm() {
             document.getElementById('consultation-form').scrollIntoView({ 
                 behavior: 'smooth',
@@ -959,11 +1040,18 @@
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
                     this.parentElement.style.transform = 'scale(1.02)';
+                    this.parentElement.style.transition = 'transform 0.3s ease';
                 });
                 input.addEventListener('blur', function() {
                     this.parentElement.style.transform = 'scale(1)';
                 });
             });
+            
+            // 폼 제출 이벤트 리스너 등록
+            const form = document.getElementById('consultForm');
+            if (form) {
+                form.addEventListener('submit', handleSubmit);
+            }
         });
     </script>
 </body>
